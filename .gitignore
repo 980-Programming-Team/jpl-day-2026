@@ -185,7 +185,10 @@ compile_commands.json
 
 # Eclipse generated file for annotation processors
 .factorypath
+<<<<<<< HEAD
+=======
 
 
 # Personal wakatime configurations - Ash-ioL
 .wakatime-project
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd

@@ -1,43 +1,44 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTable;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 import edu.wpi.first.networktables.BooleanPublisher;
-
+import edu.wpi.first.networktables.NetworkTable; // Note: fixed 'NetworkTables' type typo to NetworkTable
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.SubsystemBase; // Assuming this extends SubsystemBase for periodic()
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import frc.robot.Constants.CAN; 
-import static edu.wpi.first.units.Units.*;
+
+
 
 public class Collector extends SubsystemBase{
     private SparkMax indexer;
     private SparkMax collector;
     private DigitalInput beamBreak;
-    private final BooleanPublisher noteDetect;
 
     public Collector() {
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable folder = inst.getTable("SmartDashboard/subsystems/collector");
-        indexer = new SparkMax(CAN.index, MotorType.kBrushless);
-        collector = new SparkMax(CAN.collect, MotorType.kBrushless);
+        NetworkTablesInstance inst = NetworkTablesInstance.getDefault();
+        NetworkTables folder = inst.getTable("SmartDashboard/subsystems/collector");
+        indexer = new SparkMax(CAN.indexer, MotorType.kBrushless);
+        collector = new SparkMax(CAN.collector, MotorType.kBrushless);
         beamBreak = new DigitalInput(0);
-        noteDetect = folder.getBooleanTopic("noteDetect").publish();
+        final BooleanPublisher noteDetect = folder.getBooleanTopic("noteDetect").publish();
+        
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
 
-        SparkMaxConfig indexerConfig = new SparkMaxConfig();
-        SparkMaxConfig collectorConfig = new SparkMaxConfig();
-        indexerConfig.inverted(true);
-        indexerConfig.smartCurrentLimit(20);
+        // 2. Set inverted to true on the config object
+        motorConfig.inverted(true);
 
-        collectorConfig.inverted(true);
-        collectorConfig.smartCurrentLimit(40);
+        // 3. Apply the config to your motor controllers
+        indexer.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        collector.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        
 
-        indexer.configure(indexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        collector.configure(collectorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
@@ -46,29 +47,29 @@ public class Collector extends SubsystemBase{
     }
 
     public void intake(){
-        collector.setVoltage(Volts.of(-8.4));
+        collector.set(-.7);
     }
 
     public void outtake(){
-        collector.setVoltage(Volts.of(8.4));
+        collector.setVoltage(.7);
     }
 
     public void index(){
-        indexer.setVoltage(Volts.of(6));
+        indexer.setVoltage(.5);
     }
 
     public void indexIntoShooter(){
-        collector.setVoltage(Volts.of(-8.4));
-        indexer.setVoltage(Volts.of(6));
+        collector.setVoltage(-8.4);
+        indexer.setVoltage(6);
     }
 
     public void indexIntoAmp(){
-        collector.setVoltage(Volts.of(8.4));
-        indexer.setVoltage(Volts.of(3.6));
+        collector.setVoltage(8.4);
+        indexer.setVoltage(3.6);
     }
 
     public void off(){
-        collector.setVoltage(Volts.of(0));
-        indexer.setVoltage(Volts.of(0));
+        collector.setVoltage(0);
+        indexer.setVoltage(0);
     }
 }

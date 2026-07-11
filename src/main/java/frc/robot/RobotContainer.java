@@ -4,6 +4,18 @@
 
 package frc.robot;
 
+<<<<<<< HEAD
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+=======
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -15,16 +27,39 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+<<<<<<< HEAD
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveTeamConstants;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.CollectCommand;
+import frc.robot.commands.IndexCommand;
+import frc.robot.commands.IndexToShooter;
+import frc.robot.commands.OuttakeCommand;
+import frc.robot.subsystems.AmpShooter;
+import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.PhotonFinder;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.SwerveSubsystem;
+
+import java.io.File;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+=======
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -34,6 +69,25 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
 
+<<<<<<< HEAD
+  // The robot's subsystems and commands are defined here...
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+                                                                         "swerve"));
+
+  private final Shooter shooter = new Shooter();
+  public final static Collector collector = new Collector();
+  private final AmpShooter ampShooter = new AmpShooter();
+  private final PhotonFinder finder = new PhotonFinder();
+
+
+  private final SendableChooser<Command> autoChooser;
+
+
+      // Replace with CommandPS4Controller or CommandJoystick if needed
+  private final CommandXboxController driver = new CommandXboxController(DriveTeamConstants.driver);
+
+  private final CommandXboxController operator = new CommandXboxController(DriveTeamConstants.operator);
+=======
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
@@ -91,6 +145,7 @@ public class RobotContainer
   .headingWhile(true)
   .translationHeadingOffset(true)
   .translationHeadingOffset(Rotation2d.fromDegrees(0));
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -98,6 +153,64 @@ public class RobotContainer
   public RobotContainer()
   {
     // Configure the trigger bindings
+<<<<<<< HEAD
+    registerCommands();
+    configurePathPlanner();
+    configureBindings();
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto", autoChooser);
+
+    // Applies deadbands and inverts controls because joysticks
+    // are back-right positive while robot
+    // controls are front-left positive
+    // left stick controls translation
+    // right stick controls the angular velocity of the robot
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+        () -> MathUtil.applyDeadband(-driver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-driver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> -driver.getRightX());
+
+    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
+        () -> MathUtil.applyDeadband(-driver.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-driver.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> -driver.getRightX());
+
+    drivebase.setDefaultCommand(
+        !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedDirectAngleSim);
+
+    shooter.setDefaultCommand(Commands.run(
+      () -> shooter.tiltShooter(operator.getRightY()),
+      shooter
+    ));
+
+    // //ALLOWS POSE2D TO GO ON SMARTDASHBOARD 
+    // //TODO NEEDS TO RUN ENTIRE TIME WHILST IN SIMULATION
+    // Field2d field2d = new Field2d();
+    // Pose2d pose = drivebase.getPose();
+    // field2d.setRobotPose(pose);
+
+    // SmartDashboard.putData("2D Pose" , field2d);
+    
+  }
+
+  public void configurePathPlanner() 
+  {
+
+
+
+      drivebase.setupPathPlanner();
+
+  }
+
+  private void registerCommands()
+  {
+
+          // NamedCommands GO HERE 
+      // Example: NamedCommands.registerCommand("ShootNote", new Shooter());
+
+    
+=======
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     
@@ -115,6 +228,7 @@ public class RobotContainer
 
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
   }
 
   /**
@@ -126,6 +240,25 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+<<<<<<< HEAD
+
+    driver.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    operator.rightBumper().whileTrue(new CollectCommand());
+    operator.rightTrigger().whileTrue(new IndexToShooter());
+    
+    // operator.leftBumper().whileTrue(new OuttakeCommand());
+    // operator.rightBumper().whileTrue((Commands.runOnce(collector::intake))); //indexIntoShooter
+    // operator.leftBumper().whileTrue((Commands.runOnce(collector::off)));
+    // // driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+
+
+
+
+    //prajbox safety switch on activates climbers on sticks, disables collector
+    //hold button to reverse
+
+    
+=======
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
@@ -188,6 +321,7 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
     }
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
 
   }
 
@@ -198,12 +332,28 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
+<<<<<<< HEAD
+    // An example command will be run in autonomous
+    return autoChooser.getSelected();
+  }
+
+  public void setDriveMode()
+  {
+    //drivebase.setDefaultCommand();
+  }
+
+=======
     // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand 
     return autoChooser.getSelected();
   }
 
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
