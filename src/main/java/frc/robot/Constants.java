@@ -4,11 +4,7 @@
 
 package frc.robot;
 
-<<<<<<< HEAD
-import com.pathplanner.lib.util.PIDConstants;
-=======
 //import com.pathplanner.lib.util.PIDConstants;
->>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
@@ -27,18 +23,10 @@ import swervelib.math.Matter;
  */
 public final class Constants
 {
-<<<<<<< HEAD
-
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-  public static final double MAX_SPEED  = Units.feetToMeters(15.1);
-=======
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = Units.feetToMeters(15.1);
->>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
       // Maximum speed of the robot in meters per second, used to limit acceleration.
 
   public static final class CAN
@@ -56,18 +44,10 @@ public final class Constants
 
   }
 
-<<<<<<< HEAD
-  public static final class AutonConstants
-  {
-
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
-=======
   public static final class AutoConstants
   {
     // public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
     // public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
->>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
   }
 
   public static final class DrivebaseConstants
@@ -90,21 +70,9 @@ public final class Constants
 
   public static class OperatorConstants
   {
-<<<<<<< HEAD
-      
-
-
-
-    // Joystick Deadband
-    public static final double LEFT_X_DEADBAND  = 0.1;
-    public static final double LEFT_Y_DEADBAND  = 0.1;
-    public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double TURN_CONSTANT    = 6;
-=======
     public static final int k_driverControllerPort = 0;
     // Joystick Deadband
     public static final double k_deadband = 0.1;
     public static final double TURN_CONSTANT = 6;
->>>>>>> 2df575ca02422bdb5feadc7a339e6a239e1a28fd
   }
 }
