@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class Shooter extends SubsystemBase {
   private final double SHOOTER_RPM_MAX = 5800; ///60 to make rpm to rps,  TODO: get actual max RPM
   private final double SHOOTER_FEEDFORWARD_KS = 0.05; //probably the same as before
-  private final double SHOOTER_FEEDFORWARD_KV = 12.0 / SHOOTER_RPM_MAX;
+  private final double SHOOTER_FEEDFORWARD_KV = 12.0 // SHOOTER_RPM_MAX;
 
   private CANSparkMax flywheelRightBot;
   private CANSparkMax flywheelLeftTop;
