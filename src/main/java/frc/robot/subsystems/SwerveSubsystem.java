@@ -117,7 +117,6 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void simulationPeriodic()
   {
-    this.swerveDrive.simulationPeriodic();
   }
 
   public void setSimulationConfigs() {
