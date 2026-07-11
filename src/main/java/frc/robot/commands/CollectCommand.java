@@ -3,14 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+import frc.robot.subsystems.Collector;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
 public class CollectCommand extends Command {
+  private final Collector m_collector;
   /** Creates a new CollectCommand. */
-  public CollectCommand() {
+  public CollectCommand(Collector collector) {
     addRequirements(RobotContainer.collector);
+    m_collector = collector;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -21,13 +24,13 @@ public class CollectCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.collector.intake();
+    m_collector.intake();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.collector.off();
+    m_collector.off();
   }
 
   // Returns true when the command should end.
