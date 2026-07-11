@@ -1,4 +1,8 @@
-# 2024 V2 -- JPL Day Update
+# 2026 JPL Day
+
+This is a version of Team 980's 2024 v2 robot, modified for 2026 support and the specific demonstrations we'll be doing.
+
+2024 v2 repository: 
 
 ## Tech Stack
 
