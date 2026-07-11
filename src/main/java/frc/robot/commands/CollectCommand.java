@@ -12,7 +12,7 @@ public class CollectCommand extends Command {
   private final Collector m_collector;
   /** Creates a new CollectCommand. */
   public CollectCommand(Collector collector) {
-    addRequirements(RobotContainer.collector);
+    addRequirements(m_collector);
     m_collector = collector;
     // Use addRequirements() here to declare subsystem dependencies.
   }

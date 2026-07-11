@@ -1,93 +1,75 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.CAN;
-
-public class Collector extends SubsystemBase {
-  private CANSparkMax index;
-  private CANSparkMax collect;
-
-  private boolean override;
-
-  private DigitalInput beamBreak;
-  private int RUMBLE_TIMER = 25;
-
-  private CommandXboxController xboxD;
-  private CommandXboxController xboxO;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.NetworkTable; // Note: fixed 'NetworkTables' type typo to NetworkTable
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.SubsystemBase; // Assuming this extends SubsystemBase for periodic()
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 
-  /** Creates a new Collector. */
-  public Collector() {
-    index = new CANSparkMax(CAN.index, MotorType.kBrushless);
-    collect = new CANSparkMax(CAN.collect, MotorType.kBrushless);
 
-    index.setInverted(true);
-    collect.setInverted(true);
+public class Collector extends SubsystemBase{
+    private SparkMax indexer;
+    private SparkMax collector;
+    private DigitalInput beamBreak;
 
-    override = false;
+    public Collector() {
+        NetworkTablesInstance inst = NetworkTablesInstance.getDefault();
+        NetworkTables folder = inst.getTable("SmartDashboard/subsystems/collector");
+        indexer = new SparkMax(CAN.indexer, MotorType.kBrushless);
+        collector = new SparkMax(CAN.collector, MotorType.kBrushless);
+        beamBreak = new DigitalInput(0);
+        final BooleanPublisher noteDetect = folder.getBooleanTopic("noteDetect").publish();
+        
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
 
+        // 2. Set inverted to true on the config object
+        motorConfig.inverted(true);
 
-    beamBreak = new DigitalInput(0);
+        // 3. Apply the config to your motor controllers
+        indexer.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        collector.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        
 
-    //primaryNoteDetect = new DigitalInput(0);
-    //this.xboxD = xboxD;
-    //this.xboxO = xboxO;
-    //parameter: CommandXboxController xboxD , CommandXboxController xboxO
+    }
 
-  }
+    @Override
+    public void periodic() {
+        noteDetect.set(beamBreak.get());
+    }
 
-  @Override
-  public void periodic() {
-    boolean beamBreakState = beamBreak.get();
-    SmartDashboard.putBoolean("BeamBreak", beamBreakState);
-    //if()
-    //xboxD.getHID().setRumble(RumbleType.kBothRumble , 1);
-    // This method will be called once per scheduler run
-  }
+    public void intake(){
+        collector.set(-.7);
+    }
 
+    public void outtake(){
+        collector.setVoltage(.7);
+    }
 
-  public void intake(){
-    collect.set(-.7);
-  }
+    public void index(){
+        indexer.setVoltage(.5);
+    }
 
-  public void outtake(){
-    collect.set(.7);
-  }
+    public void indexIntoShooter(){
+        collector.setVoltage(-8.4);
+        indexer.setVoltage(6);
+    }
 
-  public void index(){
-    index.set(.5);
-  }
+    public void indexIntoAmp(){
+        collector.setVoltage(8.4);
+        indexer.setVoltage(3.6);
+    }
 
-  public void indexIntoShooter(){
-    collect.set(-.7);
-    index.set(.5);
-  }
-
-  public void indexIntoAmp(){
-    collect.set(.7);
-    index.set(.3);
-  }
-
-  public boolean getNoteDetect(){
-    return beamBreak.get();
-  }
-
-  public void off(){
-    collect.set(0);
-    index.set(0);
-  }
-
-
+    public void off(){
+        collector.setVoltage(0);
+        indexer.setVoltage(0);
+    }
 }
