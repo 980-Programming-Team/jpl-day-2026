@@ -12,8 +12,8 @@ public class CollectCommand extends Command {
   private final Collector m_collector;
   /** Creates a new CollectCommand. */
   public CollectCommand(Collector collector) {
-    addRequirements(m_collector);
     m_collector = collector;
+    addRequirements(m_collector);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
