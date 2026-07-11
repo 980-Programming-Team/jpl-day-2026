@@ -9,7 +9,7 @@ import frc.robot.RobotContainer;
 
 public class CollectCommand extends Command {
   /** Creates a new CollectCommand. */
-  public CollectCommand() {
+  public CollectCommand(Collector collector) {
     addRequirements(RobotContainer.collector);
     // Use addRequirements() here to declare subsystem dependencies.
   }

@@ -26,7 +26,7 @@ public class FireNoteCommand extends Command {
   @Override
   public void execute() {
       shooter.fireNote(2000 , 4000);
- }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

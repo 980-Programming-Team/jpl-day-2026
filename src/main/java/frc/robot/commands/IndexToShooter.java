@@ -6,11 +6,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Collector;
 
 public class IndexToShooter extends Command {
+  Collector m_collector;
   /** Creates a new CollectCommand. */
-  public IndexToShooter() {
-    addRequirements(RobotContainer.collector);
+  public IndexToShooter(Collector collector) {
+    m_collector = collector;
+    addRequirements(collector);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -21,13 +24,13 @@ public class IndexToShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.collector.indexIntoShooter();
+    m_collector.indexIntoShooter();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.collector.off();
+    m_collector.off();
   }
 
   // Returns true when the command should end.
