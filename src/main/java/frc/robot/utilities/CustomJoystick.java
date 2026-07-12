@@ -4,15 +4,14 @@ import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class CustomJoystick extends CommandXboxController {
 
     public enum OS {
         WINDOWS(4, 5, 3, 2),
-        MACOS(2, 3, 6, 5);
+        MACOS(2, 3, 4, 5); // Default mappings. Axis 6/5 are left/right triggers on macOS bluetooth.
 
         public final int rightStickX;
         public final int rightStickY;
@@ -27,7 +26,7 @@ public class CustomJoystick extends CommandXboxController {
         }
     }
 
-    private final OS currentOS;
+    private OS currentOS;
 
     private final DoublePublisher rightStickXPub;
     private final DoublePublisher rightStickYPub;
@@ -49,6 +48,7 @@ public class CustomJoystick extends CommandXboxController {
     
     private final BooleanPublisher lbPub;
     private final BooleanPublisher rbPub;
+    private final StringPublisher osPub;
 
     public CustomJoystick(OS os, int joystickId) {
         super(joystickId);
@@ -57,40 +57,39 @@ public class CustomJoystick extends CommandXboxController {
         // Data Logging
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-        NetworkTable rightStickTable = inst.getTable(String.format("SmartDashboard/Joy%s/rightStick", joystickId));
+        NetworkTable rightStickTable = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s/rightStick", joystickId));
         rightStickXPub = rightStickTable.getDoubleTopic("x").publish();
         rightStickYPub = rightStickTable.getDoubleTopic("y").publish();
 
-        NetworkTable leftStickTable = inst.getTable(String.format("SmartDashboard/Joy%s/leftStick", joystickId));
+        NetworkTable leftStickTable = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s/leftStick", joystickId));
         leftStickXPub = leftStickTable.getDoubleTopic("x").publish();
         leftStickYPub = leftStickTable.getDoubleTopic("y").publish();
 
-        NetworkTable buttonsTable = inst.getTable(String.format("SmartDashboard/Joy%s/buttons", joystickId));
+        NetworkTable buttonsTable = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s/buttons", joystickId));
         aPub = buttonsTable.getBooleanTopic("a").publish();
         bPub = buttonsTable.getBooleanTopic("b").publish();
         xPub = buttonsTable.getBooleanTopic("x").publish();
         yPub = buttonsTable.getBooleanTopic("y").publish();
 
-        NetworkTable triggersTable = inst.getTable(String.format("SmartDashboard/Joy%s/triggers", joystickId));
+        NetworkTable triggersTable = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s/triggers", joystickId));
         leftTriggerPub = triggersTable.getDoubleTopic("left").publish();
         rightTriggerPub = triggersTable.getDoubleTopic("right").publish();
 
-        NetworkTable dPadTable = inst.getTable(String.format("SmartDashboard/Joy%s/dPad", joystickId));
+        NetworkTable dPadTable = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s/dPad", joystickId));
         dPadUpPub = dPadTable.getBooleanTopic("up").publish();
         dPadDownPub = dPadTable.getBooleanTopic("down").publish();
         dPadLeftPub = dPadTable.getBooleanTopic("left").publish();
         dPadRightPub = dPadTable.getBooleanTopic("right").publish();
 
-        NetworkTable bumpersTable = inst.getTable(String.format("SmartDashboard/Joy%s/bumpers", joystickId));
+        NetworkTable bumpersTable = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s/bumpers", joystickId));
         lbPub = bumpersTable.getBooleanTopic("lb").publish();
         rbPub = bumpersTable.getBooleanTopic("rb").publish();
 
-        new Trigger(()->true).whileTrue(
-            new RunCommand(this::periodic).ignoringDisable(true)
-        );
+        NetworkTable table = inst.getTable(String.format("SmartDashboard/Joysticks/Joy%s", joystickId));
+        osPub = table.getStringTopic("OS").publish();
     }
 
-    private void periodic() {
+    public void periodic() {
         rightStickXPub.set(this.getRightX());
         rightStickYPub.set(this.getRightY());
         leftStickXPub.set(this.getLeftX());
@@ -112,6 +111,11 @@ public class CustomJoystick extends CommandXboxController {
 
         lbPub.set(this.leftBumper().getAsBoolean());
         rbPub.set(this.rightBumper().getAsBoolean());
+        osPub.set(currentOS.toString());
+    }
+
+    public void setOS(OS os) {
+        this.currentOS = os;
     }
 
     @Override
@@ -125,12 +129,22 @@ public class CustomJoystick extends CommandXboxController {
     }
 
     @Override
-    public double getRightTriggerAxis() {
-        return this.getRawAxis(currentOS.rightTrigger);
+    public double getLeftTriggerAxis() {
+        double raw = this.getRawAxis(currentOS.leftTrigger);
+        
+        if (currentOS == OS.MACOS) {
+            return (raw + 1.0) / 2.0;
+        }
+        return raw;
     }
 
     @Override
-    public double getLeftTriggerAxis() {
-        return this.getRawAxis(currentOS.leftTrigger);
+    public double getRightTriggerAxis() {
+        double raw = this.getRawAxis(currentOS.rightTrigger);
+        
+        if (currentOS == OS.MACOS && raw == 0.0) {
+            return (raw + 1.0) / 2.0;
+        }
+        return raw;
     }
 }

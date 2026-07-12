@@ -12,6 +12,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEvent;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -26,6 +31,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utilities.CustomJoystick;
 
 import java.io.File;
+import java.util.EnumSet;
+
 import swervelib.SwerveInputStream;
 
 /**
@@ -37,7 +44,13 @@ public class RobotContainer
 {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.WINDOWS, 0);
+  final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.MACOS, 0);
+
+  public CommandXboxController getDriverController()
+  {
+    return driverXbox;
+  }
+
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase  = new SwerveSubsystem(
     new File(Filesystem.getDeployDirectory(),"swerve")
@@ -99,6 +112,25 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable configTable = inst.getTable("SmartDashboard/ManualConfigs/OS");
+    configTable.getStringTopic("OS Value").publish().set("macos");
+    configTable.getStringArrayTopic("OS Options").publish().set(new String[]{"macos", "windows"});
+    StringSubscriber osSub = configTable.getStringTopic("OS Value").subscribe("");
+
+    inst.addListener(
+      osSub,
+      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+      event -> {
+        if (event.valueData != null)
+        {
+          System.out.println("OS changed to: " + event.valueData.value.getString());
+          ((CustomJoystick) driverXbox).setOS(event.valueData.value.getString().toLowerCase().equals("windows") ? CustomJoystick.OS.WINDOWS : CustomJoystick.OS.MACOS);
+        }
+      }
+    );
+
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
