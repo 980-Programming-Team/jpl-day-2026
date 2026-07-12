@@ -1,28 +1,40 @@
 package frc.robot.utilities;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class CustomJoystick extends CommandXboxController {
 
     public enum OS {
-        WINDOWS(4, 5, 3, 2),
-        MACOS(2, 3, 4, 5); // Default mappings. Axis 6/5 are left/right triggers on macOS bluetooth.
+        WINDOWS(4, 5, 3, 2, 3, 4, 6, 5),
+        MACOS(2, 3, 4, 5, 4, 5, 8, 7);
 
         public final int rightStickX;
         public final int rightStickY;
         public final int rightTrigger;
         public final int leftTrigger;
+        public final int x;
+        public final int y;
+        public final int rb;
+        public final int lb;
 
-        OS(int rightStickX, int rightStickY, int rightTrigger, int leftTrigger) {
+        OS(int rightStickX, int rightStickY, int rightTrigger, int leftTrigger, int x, int y, int rb, int lb) {
             this.rightStickX = rightStickX;
             this.rightStickY = rightStickY;
             this.rightTrigger = rightTrigger;
             this.leftTrigger = leftTrigger;
+            this.x = x;
+            this.y = y;
+            this.rb = rb;
+            this.lb = lb;
         }
     }
 
@@ -50,9 +62,12 @@ public class CustomJoystick extends CommandXboxController {
     private final BooleanPublisher rbPub;
     private final StringPublisher osPub;
 
+    private int id;
+
     public CustomJoystick(OS os, int joystickId) {
         super(joystickId);
         this.currentOS = os;
+        this.id = joystickId;
 
         // Data Logging
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -90,27 +105,31 @@ public class CustomJoystick extends CommandXboxController {
     }
 
     public void periodic() {
-        rightStickXPub.set(this.getRightX());
-        rightStickYPub.set(this.getRightY());
-        leftStickXPub.set(this.getLeftX());
-        leftStickYPub.set(this.getLeftY());
+        rightStickXPub.set(DriverStation.getStickAxis(id, currentOS.rightStickX));
+        rightStickYPub.set(DriverStation.getStickAxis(id, currentOS.rightStickY));
+        leftStickXPub.set(DriverStation.getStickAxis(id, 0));
+        leftStickYPub.set(DriverStation.getStickAxis(id, 1));
+
+        aPub.set(DriverStation.getStickButton(id, 1));
+        bPub.set(DriverStation.getStickButton(id, 2));
+        xPub.set(DriverStation.getStickButton(id, currentOS.x));
+        yPub.set(DriverStation.getStickButton(id, currentOS.y));
+
+        double rawLT = DriverStation.getStickAxis(id, currentOS.leftTrigger);
+        double rawRT = DriverStation.getStickAxis(id, currentOS.rightTrigger);
         
-        aPub.set(this.a().getAsBoolean());
-        bPub.set(this.b().getAsBoolean());
-        xPub.set(this.x().getAsBoolean());
-        yPub.set(this.y().getAsBoolean());
+        leftTriggerPub.set((currentOS == OS.MACOS) ? (rawLT + 1.0) / 2.0 : rawLT);
+        rightTriggerPub.set((currentOS == OS.MACOS) ? (rawRT + 1.0) / 2.0 : rawRT);
         
-        leftTriggerPub.set(this.getLeftTriggerAxis());
-        rightTriggerPub.set(this.getRightTriggerAxis());
-        
-        int pov = this.getHID().getPOV();
+        int pov = DriverStation.getStickPOV(id, 0);
         dPadUpPub.set(pov == 0);
         dPadRightPub.set(pov == 90);
         dPadDownPub.set(pov == 180);
         dPadLeftPub.set(pov == 270);
 
-        lbPub.set(this.leftBumper().getAsBoolean());
-        rbPub.set(this.rightBumper().getAsBoolean());
+        lbPub.set(DriverStation.getStickButton(id, currentOS.lb));
+        rbPub.set(DriverStation.getStickButton(id, currentOS.rb));
+        
         osPub.set(currentOS.toString());
     }
 
@@ -146,5 +165,25 @@ public class CustomJoystick extends CommandXboxController {
             return (raw + 1.0) / 2.0;
         }
         return raw;
+    }
+
+    @Override
+    public Trigger x() {
+        return new Trigger((BooleanSupplier) () -> this.getHID().getRawButton(currentOS.x));
+    }
+
+    @Override
+    public Trigger y() {
+        return new Trigger((BooleanSupplier) () -> this.getHID().getRawButton(currentOS.y));
+    }
+
+    @Override
+    public Trigger rightBumper() {
+        return new Trigger((BooleanSupplier) () -> this.getHID().getRawButton(currentOS.rb));
+    }
+
+    @Override
+    public Trigger leftBumper() {
+        return new Trigger((BooleanSupplier) () -> this.getHID().getRawButton(currentOS.lb));
     }
 }

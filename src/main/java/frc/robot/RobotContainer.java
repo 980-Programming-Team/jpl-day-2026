@@ -112,7 +112,6 @@ public class RobotContainer
    */
   public RobotContainer()
   {
-
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable configTable = inst.getTable("SmartDashboard/ManualConfigs/OS");
     configTable.getStringTopic("OS Value").publish().set("macos");
