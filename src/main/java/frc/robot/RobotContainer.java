@@ -116,7 +116,8 @@ public class RobotContainer
     NetworkTable configTable = inst.getTable("SmartDashboard/ManualConfigs/OS");
     configTable.getStringTopic("OS Value").publish().set("windows");
     configTable.getStringArrayTopic("OS Options").publish().set(new String[]{"macos", "windows"});
-    StringSubscriber osSub = configTable.getStringTopic("OS Value").subscribe("");
+    StringSubscriber osSub = configTable.getStringTopic("OS Value").subscribe("windows");
+    ((CustomJoystick) driverXbox).setOS(osSub.get().equals("windows") ? CustomJoystick.OS.WINDOWS : CustomJoystick.OS.MACOS);
 
     inst.addListener(
       osSub,
@@ -124,7 +125,6 @@ public class RobotContainer
       event -> {
         if (event.valueData != null)
         {
-          System.out.println("OS changed to: " + event.valueData.value.getString());
           ((CustomJoystick) driverXbox).setOS(event.valueData.value.getString().toLowerCase().equals("windows") ? CustomJoystick.OS.WINDOWS : CustomJoystick.OS.MACOS);
         }
       }
