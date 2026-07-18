@@ -44,7 +44,7 @@ public class RobotContainer
 {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.MACOS, 0);
+  final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.WINDOWS, 0);
 
   public CommandXboxController getDriverController()
   {
@@ -114,10 +114,9 @@ public class RobotContainer
   {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable configTable = inst.getTable("SmartDashboard/ManualConfigs/OS");
-    configTable.getStringTopic("OS Value").publish().set("windows");
+    configTable.getStringTopic("OS Value").publish().set(((CustomJoystick) driverXbox).getOS() == CustomJoystick.OS.WINDOWS ? "windows" : "macos");
     configTable.getStringArrayTopic("OS Options").publish().set(new String[]{"macos", "windows"});
     StringSubscriber osSub = configTable.getStringTopic("OS Value").subscribe("windows");
-    ((CustomJoystick) driverXbox).setOS(osSub.get().equals("windows") ? CustomJoystick.OS.WINDOWS : CustomJoystick.OS.MACOS);
 
     inst.addListener(
       osSub,

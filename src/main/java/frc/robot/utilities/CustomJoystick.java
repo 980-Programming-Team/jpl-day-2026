@@ -137,6 +137,10 @@ public class CustomJoystick extends CommandXboxController {
         this.currentOS = os;
     }
 
+    public OS getOS() {
+        return this.currentOS;
+    }
+
     @Override
     public double getRightX() {
         return this.getRawAxis(currentOS.rightStickX);
