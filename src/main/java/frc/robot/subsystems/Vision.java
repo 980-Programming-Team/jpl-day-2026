@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import java.awt.Desktop;
@@ -36,7 +37,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.Alert;
-import swervelib.telemetry.Alert.AlertType;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
 
@@ -157,7 +157,8 @@ public class Vision
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera)
   {
-    Optional<EstimatedRobotPose> poseEst = filterPose(camera.poseEstimator.update());
+      Optional<EstimatedRobotPose> poseEst =
+    camera.poseEstimator.update(camera.camera.getLatestResult());
     // Uncomment to enable outputting of vision targets in sim.
     /*
      poseEst.ifPresent(estimatedRobotPose -> field2d.getObject(camera + " est pose")
@@ -434,7 +435,7 @@ public class Vision
     Cameras(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation,
             Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix)
     {
-      latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.WARNING);
+      latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 
       camera = new PhotonCamera(name);
 
@@ -442,8 +443,6 @@ public class Vision
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
       poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
-                                              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                                              camera,
                                               robotToCamTransform);
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 

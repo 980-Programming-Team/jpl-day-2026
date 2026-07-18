@@ -4,9 +4,9 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CAN;
 
 public class Collector extends SubsystemBase {
-  private CANSparkMax index;
-  private CANSparkMax collect;
+  private SparkMax index;
+  private SparkMax collect;
 
   private boolean override;
 
@@ -30,8 +30,8 @@ public class Collector extends SubsystemBase {
 
   /** Creates a new Collector. */
   public Collector() {
-    index = new CANSparkMax(CAN.index, MotorType.kBrushless);
-    collect = new CANSparkMax(CAN.collect, MotorType.kBrushless);
+    index = new SparkMax(CAN.index, MotorType.kBrushless);
+    collect = new SparkMax(CAN.collect, MotorType.kBrushless);
 
     index.setInverted(true);
     collect.setInverted(true);

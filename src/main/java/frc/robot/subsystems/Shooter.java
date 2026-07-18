@@ -7,9 +7,9 @@ package frc.robot.subsystems;
 
 import java.lang.annotation.Target;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import frc.robot.Constants.CAN;
 import edu.wpi.first.math.controller.PIDController;
@@ -23,10 +23,10 @@ public class Shooter extends SubsystemBase {
   private final double SHOOTER_FEEDFORWARD_KS = 0.05; //probably the same as before
   private final double SHOOTER_FEEDFORWARD_KV = 12.0 / SHOOTER_RPM_MAX;
 
-  private CANSparkMax flywheelRightBot;
-  private CANSparkMax flywheelLeftTop;
-  private CANSparkMax angleLeft;
-  private CANSparkMax angleRight;
+  private SparkMax flywheelRightBot;
+  private SparkMax flywheelLeftTop;
+  private SparkMax angleLeft;
+  private SparkMax angleRight;
   private RelativeEncoder topEncoder;
   private RelativeEncoder bottomEncoder;
 
@@ -43,16 +43,16 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter() 
   {
-    flywheelRightBot = new CANSparkMax(CAN.flywheelRightBot, MotorType.kBrushless);
+    flywheelRightBot = new SparkMax(CAN.flywheelRightBot, MotorType.kBrushless);
     flywheelRightBot.setInverted(true);
 
-    flywheelLeftTop = new CANSparkMax(CAN.flywheelLeftTop, MotorType.kBrushless);
+    flywheelLeftTop = new SparkMax(CAN.flywheelLeftTop, MotorType.kBrushless);
     flywheelLeftTop.setInverted(false);
 
-    angleLeft = new CANSparkMax(CAN.angleLeft, MotorType.kBrushless);
+    angleLeft = new SparkMax(CAN.angleLeft, MotorType.kBrushless);
     angleLeft.setInverted(false);
 
-    angleRight = new CANSparkMax(CAN.angleRight, MotorType.kBrushless);
+    angleRight = new SparkMax(CAN.angleRight, MotorType.kBrushless);
     angleRight.setInverted(true);
 
     topEncoder = flywheelRightBot.getEncoder();
