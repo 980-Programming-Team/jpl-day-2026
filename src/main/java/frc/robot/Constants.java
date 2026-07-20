@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.config.PIDConstants;
+
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -44,13 +44,6 @@ public final class Constants
     public static final int angleRight = 18;
     public static final int angleLeft = 16;
 
-  }
-
-  public static final class AutonConstants
-  {
-
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
   }
 
   public static final class DrivebaseConstants
