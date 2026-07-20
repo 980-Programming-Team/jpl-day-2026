@@ -7,6 +7,8 @@ package frc.robot;
 //import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -55,6 +57,7 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+    public static final Distance ROBOT_WIDTH_NO_BUMPERS = Inches.of(29);
   }
 
   public static class DriveTeamConstants
