@@ -42,7 +42,8 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
-
+  
+  public double speedScale = 0.25;
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.WINDOWS, 0);
 
@@ -64,11 +65,11 @@ public class RobotContainer
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
-    () -> driverXbox.getLeftY() * -1,
-    () -> driverXbox.getLeftX() * -1
+    () -> driverXbox.getLeftY() * -1 * speedScale,
+    () -> driverXbox.getLeftX() * -1 * speedScale
   )
-    .withControllerRotationAxis(() -> driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1))
-    .deadband(Constants.OperatorConstants.k_deadband)
+    .withControllerRotationAxis(() -> speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1))
+    .deadband(Constants.OperatorConstants.k_deadband * speedScale)
     .scaleTranslation(0.8)
     .allianceRelativeControl(true);
 
