@@ -57,6 +57,11 @@ public class RobotContainer
     new File(Filesystem.getDeployDirectory(),"swerve")
   );
 
+  public SwerveSubsystem getSwerve()
+  {
+    return drivebase;
+  }
+
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
 
@@ -65,12 +70,11 @@ public class RobotContainer
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
-    () -> driverXbox.getLeftY() * -1 * speedScale,
-    () -> driverXbox.getLeftX() * -1 * speedScale
+    () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftY() * -1 * speedScale : 0,
+    () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0
   )
-    .withControllerRotationAxis(() -> speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1))
-    .deadband(Constants.OperatorConstants.k_deadband * speedScale)
-    .scaleTranslation(0.8)
+    .withControllerRotationAxis(() -> Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1) : 0)
+    .scaleTranslation(1)
     .allianceRelativeControl(true);
 
   /**

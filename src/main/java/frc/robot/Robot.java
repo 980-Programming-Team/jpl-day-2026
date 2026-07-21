@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utilities.CustomJoystick;
+import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -121,7 +123,16 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    m_robotContainer.speedScale = 1;
+    SwerveDrive swerveDrive = m_robotContainer.getSwerve().getSwerveDrive();
+    for (SwerveModule module : swerveDrive.getModules()) {
+      module.getDriveMotor().setCurrentLimit(60);
+      module.getAngleMotor().setCurrentLimit(40);
+    }
+    swerveDrive.setCosineCompensator(false);
+    swerveDrive.setHeadingCorrection(false);
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
