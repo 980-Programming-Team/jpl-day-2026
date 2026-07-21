@@ -5,11 +5,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.RelativeEncoder;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,10 +21,6 @@ public class Collector extends SubsystemBase {
   private boolean override;
 
   private DigitalInput beamBreak;
-  private int RUMBLE_TIMER = 25;
-
-  private CommandXboxController xboxD;
-  private CommandXboxController xboxO;
 
 
   /** Creates a new Collector. */

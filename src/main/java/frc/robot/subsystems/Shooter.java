@@ -5,8 +5,6 @@
 
 package frc.robot.subsystems;
 
-import java.lang.annotation.Target;
-
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
