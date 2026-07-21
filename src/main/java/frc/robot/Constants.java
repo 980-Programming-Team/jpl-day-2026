@@ -58,6 +58,7 @@ public final class Constants
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
     public static final Distance ROBOT_WIDTH_NO_BUMPERS = Inches.of(29);
+    public static final Distance ROBOT_BUMPER_THICKNESS = Inches.of(3);
   }
 
   public static class DriveTeamConstants
