@@ -19,5 +19,5 @@ This is a version of Team 980's 2024 v2 robot, modified for 2026 support and the
 - **Vision:** PhotonVision
 
 ## Robot Hardware:
-- **Swerve Module**: SDS MK4 L3 (guessing based on constants)
+- **Swerve Module**: SDS MK4 L2 (guessing based on constants)
 - TBA
