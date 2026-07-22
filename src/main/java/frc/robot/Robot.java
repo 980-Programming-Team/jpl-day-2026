@@ -127,8 +127,8 @@ public class Robot extends LoggedRobot {
     m_robotContainer.speedScale = 1;
     SwerveDrive swerveDrive = m_robotContainer.getSwerve().getSwerveDrive();
     for (SwerveModule module : swerveDrive.getModules()) {
-      module.getDriveMotor().setCurrentLimit(60);
-      module.getAngleMotor().setCurrentLimit(40);
+      module.getDriveMotor().setCurrentLimit(10);
+      module.getAngleMotor().setCurrentLimit(5);
     }
     swerveDrive.setCosineCompensator(false);
     swerveDrive.setHeadingCorrection(false);
