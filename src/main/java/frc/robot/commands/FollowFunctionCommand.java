@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.function.Function;
 
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.RotationTarget;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,10 +22,15 @@ public class FollowFunctionCommand extends Command {
     private final double duration;
     private double startTime;
     private double ellapsedTime;
-    private final double frameRate = 2;
+    private final double frameRate = 2; // frames per x
     private final double frameTime = 1 / frameRate;
+
+    private final PathConstraints constraints = new PathConstraints(3.0, 3.0, Math.PI, Math.PI);
     
     private List<Pose2d> waypoints;
+    private List<Waypoint> finalWaypoints;
+    private List<RotationTarget> finalRotations;
+    private PathPlannerPath finalPath;
     private Pose2d prevPoint;
     private SwerveSubsystem swerve;
 
@@ -35,6 +46,9 @@ public class FollowFunctionCommand extends Command {
         this.ellapsedTime = 0;
         this.waypoints = new ArrayList<>();
         this.prevPoint = null;
+        this.finalWaypoints = null;
+        this.finalRotations = new ArrayList<>();
+        this.finalPath = null;
 
         while (ellapsedTime < duration) {
             double x = ellapsedTime;
@@ -52,6 +66,23 @@ public class FollowFunctionCommand extends Command {
             waypoints.add(point);
             ellapsedTime += frameTime;
         }
+
+        finalWaypoints = PathPlannerPath.waypointsFromPoses(waypoints);
+        for (int i = 0; i < waypoints.size(); i++) {
+            finalRotations.add(new RotationTarget((double)(i), waypoints.get(i).getRotation()));
+        }
+
+        finalPath = new PathPlannerPath(
+            finalWaypoints, 
+            finalRotations, 
+            null,
+            null,
+            null,
+            constraints,
+            null,
+            new GoalEndState(0.0, prevPoint.getRotation()),
+            false
+        );
     }
 
     @Override
