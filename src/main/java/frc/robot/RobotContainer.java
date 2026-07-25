@@ -71,9 +71,9 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
     () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftY() * -1 * speedScale : 0,
-    () -> (Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0) * (Robot.isReal() ? -1 : 1)
+    () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0
   )
-    .withControllerRotationAxis(() -> Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1) : 0)
+    .withControllerRotationAxis(() -> (Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1) : 0) * (Robot.isReal() ? -1 : 1))
     .scaleTranslation(1)
     .allianceRelativeControl(true);
 
@@ -223,7 +223,7 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
-    }
+    } 
 
   }
 
