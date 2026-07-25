@@ -71,7 +71,7 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
     () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftY() * -1 * speedScale : 0,
-    () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0
+    () -> (Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0) * (Robot.isReal() ? -1 : 1)
   )
     .withControllerRotationAxis(() -> Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1) : 0)
     .scaleTranslation(1)
