@@ -8,6 +8,12 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import static edu.wpi.first.units.Units.*;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,7 +35,9 @@ public final class Constants
   public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = Units.feetToMeters(15.1);
-      // Maximum speed of the robot in meters per second, used to limit acceleration.
+  public static Optional<RobotConfig> ROBOT_CONFIG = Optional.empty();
+  
+  // Maximum speed of the robot in meters per second, used to limit acceleration.
 
   public static final class CAN
   {
