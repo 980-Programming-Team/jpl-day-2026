@@ -15,14 +15,11 @@ public class FollowFunctionCommand extends Command {
     private final Function<Double, Double> function;
     private final double duration;
     private double startTime;
-    private double currentTime;
-    private double lastTime;
-    private double dt;
+    private double ellapsedTime;
     private final double frameRate = 2;
     private final double frameTime = 1 / frameRate;
-    private double accumulatedTime = 0;
     
-    private List<Pose2d> checkPoints = new ArrayList<>();
+    private List<Pose2d> waypoints;
     private Pose2d prevPoint;
     private SwerveSubsystem swerve;
 
@@ -34,36 +31,36 @@ public class FollowFunctionCommand extends Command {
 
     @Override
     public void initialize() {
-        startTime = Timer.getFPGATimestamp();
-        currentTime = startTime;
-        lastTime = startTime;
-    }
+        this.startTime = Timer.getFPGATimestamp();
+        this.ellapsedTime = 0;
+        this.waypoints = new ArrayList<>();
+        this.prevPoint = null;
 
-    @Override
-    public void execute() {
-        currentTime = Timer.getFPGATimestamp();
-        dt = currentTime - lastTime;
-        lastTime = currentTime;
-        accumulatedTime += dt;
-        if (accumulatedTime >= frameTime) {
-            accumulatedTime %= frameTime;
-            double elapsedTime = currentTime - startTime;
-            double x = elapsedTime;
+        while (ellapsedTime < duration) {
+            double x = ellapsedTime;
             double y = function.apply(x);
 
             Pose2d point = new Pose2d(x, y, Rotation2d.kZero);
-            
+
             if (prevPoint != null) {
                 Rotation2d angle = new Rotation2d(prevPoint.getX()-point.getX(), prevPoint.getY()-point.getY());
                 point.rotateBy(angle);
             }
 
-            checkPoints.add(point);
+            prevPoint = point;
+
+            waypoints.add(point);
+            ellapsedTime += frameTime;
         }
     }
 
     @Override
+    public void execute() {
+        
+    }
+
+    @Override
     public boolean isFinished() {
-        return Timer.getFPGATimestamp() - startTime >= duration;
+        return ellapsedTime >= duration;
     }
 }
