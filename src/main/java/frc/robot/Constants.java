@@ -84,7 +84,7 @@ public final class Constants
   {
     public static final int k_driverControllerPort = 0;
     // Joystick Deadband
-    public static final double k_deadband = 0.4; // TODO: revert
+    public static final double k_deadband = 0.2; // TODO: revert
     public static final double TURN_CONSTANT = 6;
   }
 }
