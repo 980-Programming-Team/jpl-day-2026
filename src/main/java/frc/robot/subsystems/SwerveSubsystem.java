@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -39,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,6 +125,7 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    Constants.FIELD.setRobotPose(swerveDrive.getPose());
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
   }
@@ -448,10 +451,23 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param velocity Velocity according to the field.
    */
+  
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity)
   {
     return run(() -> {
-      swerveDrive.driveFieldOriented(velocity.get());
+      double vx = velocity.get().vxMetersPerSecond;
+      double vy = velocity.get().vyMetersPerSecond;
+      double predictTime = Constants.DrivebaseConstants.BOUNDS_LOOK_TIME.in(Seconds);
+      Translation2d predictedTranslation = new Translation2d(vx * predictTime, vy * predictTime);
+
+      Pose2d curPose = swerveDrive.getPose();
+      Pose2d predictedPose = new Pose2d(curPose.getTranslation().plus(predictedTranslation), curPose.getRotation());
+
+      RobotContainer m_robotContainer = Robot.m_robotContainer;
+      if (!(m_robotContainer != null && m_robotContainer.applyBounds && !Constants.DrivebaseConstants.ROBOT_BOUNDS.contains(predictedPose.getTranslation())))
+      {
+        swerveDrive.driveFieldOriented(velocity.get());
+      }
     });
   }
 

@@ -31,7 +31,7 @@ import swervelib.SwerveModule;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
-  private final RobotContainer m_robotContainer;
+  public static RobotContainer m_robotContainer;
   private CustomJoystick driverController;
   private PigeonIMU testPigeon;
   private DoublePublisher pigeonPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Raw Pigeon Yaw").publish();

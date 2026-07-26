@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
@@ -42,7 +43,10 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
-  
+  public boolean applyBounds = true;
+  public boolean alignmentSideLeft = false;
+  public BooleanPublisher applyBoundsPublisher = NetworkTableInstance.getDefault().getTable("Bounds").getBooleanTopic("Bounds Active").publish();
+
   public double speedScale = 0.25;
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.WINDOWS, 0);
@@ -70,7 +74,7 @@ public class RobotContainer
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
+  public SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
     () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftY() * -1 * speedScale : 0,
     () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0
@@ -120,7 +124,7 @@ public class RobotContainer
    */
   public RobotContainer()
   {
-    
+    applyBoundsPublisher.set(applyBounds);
     drivebase.zeroGyro();
 
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -223,10 +227,10 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
+
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driverXbox.y().onTrue(Commands.runOnce(() -> applyBounds = !applyBounds).andThen(Commands.runOnce(() -> applyBoundsPublisher.set(applyBounds))));
+      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly()); // x lock
       driverXbox.rightBumper().onTrue(Commands.none());
     } 
 
