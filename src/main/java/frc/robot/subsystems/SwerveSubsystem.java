@@ -25,6 +25,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,6 +62,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase
 {
+  DoublePublisher rotationPublisher = NetworkTableInstance.getDefault().getDoubleTopic("rotation").publish();
   /**
    * Swerve drive object.
    */
@@ -122,6 +126,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
+    rotationPublisher.set(swerveDrive.getOdometryHeading().getDegrees());
   }
 
   @Override

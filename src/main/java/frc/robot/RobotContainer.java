@@ -57,6 +57,8 @@ public class RobotContainer
     new File(Filesystem.getDeployDirectory(),"swerve")
   );
 
+  
+
   public SwerveSubsystem getSwerve()
   {
     return drivebase;
@@ -118,6 +120,9 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    
+    drivebase.zeroGyro();
+
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable configTable = inst.getTable("SmartDashboard/ManualConfigs/OS");
     configTable.getStringTopic("OS Value").publish().set(((CustomJoystick) driverXbox).getOS() == CustomJoystick.OS.WINDOWS ? "windows" : "macos");
