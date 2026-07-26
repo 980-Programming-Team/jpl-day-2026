@@ -10,6 +10,10 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -29,12 +33,15 @@ public class Robot extends LoggedRobot {
 
   private final RobotContainer m_robotContainer;
   private CustomJoystick driverController;
+  private PigeonIMU testPigeon;
+  private DoublePublisher pigeonPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Raw Pigeon Yaw").publish();
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
+    testPigeon = new PigeonIMU(30);
     Logger.recordMetadata("ProjectName", "jpl-day-2026"); // Set your project name
 
     if (isReal()) { // True if real, false if simulation
@@ -71,6 +78,10 @@ public class Robot extends LoggedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     driverController.periodic();
+
+    if (Robot.isReal()) {
+      pigeonPublisher.set(testPigeon.getYaw());
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

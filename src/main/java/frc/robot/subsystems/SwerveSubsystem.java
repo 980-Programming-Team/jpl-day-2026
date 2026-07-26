@@ -62,7 +62,6 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase
 {
-  DoublePublisher rotationPublisher = NetworkTableInstance.getDefault().getDoubleTopic("rotation").publish();
   /**
    * Swerve drive object.
    */
@@ -126,7 +125,6 @@ public class SwerveSubsystem extends SubsystemBase
   {
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
-    rotationPublisher.set(swerveDrive.getOdometryHeading().getDegrees());
   }
 
   @Override
