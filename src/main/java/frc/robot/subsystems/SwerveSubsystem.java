@@ -133,8 +133,8 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void setSimulationConfigs() {
-      this.swerveDrive.setHeadingCorrection(false);
-      this.swerveDrive.setCosineCompensator(false);
+      this.swerveDrive.setHeadingCorrection(true);
+      this.swerveDrive.setCosineCompensator(true);
   }
 
   /**
