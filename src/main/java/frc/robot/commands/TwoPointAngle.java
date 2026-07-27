@@ -18,16 +18,15 @@ public class TwoPointAngle extends Command {
     Translation2d currentPoint;
     SwerveSubsystem swerve;
     double threshold = 0.2; //degrees
-    boolean aim = false;
     boolean left;
 
-    Translation2d rotationVec;
-
-    SwerveInputStream driveTargetAngle = Robot.m_robotContainer.driveAngularVelocity.copy()
+    public static Translation2d rotationVec = new Translation2d(0, 0);
+    public static boolean aim = false;
+    public static SwerveInputStream driveTargetAngle = Robot.m_robotContainer.driveAngularVelocity.copy()
         .withControllerHeadingAxis(() -> -rotationVec.getX(), () -> -rotationVec.getY())
         .headingWhile(()->aim);
 
-    TwoPointAngle(SwerveSubsystem swerve, boolean left) {
+    public TwoPointAngle(SwerveSubsystem swerve, boolean left) {
         this.swerve = swerve;
         this.left = left;
     }

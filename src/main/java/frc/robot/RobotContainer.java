@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.TwoPointAngle;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utilities.CustomJoystick;
 
@@ -175,6 +176,7 @@ public class RobotContainer
   {
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveFieldOrientedBounds = drivebase.driveFieldOriented(TwoPointAngle.driveTargetAngle);
     // Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
     Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
     // Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
@@ -216,22 +218,25 @@ public class RobotContainer
 //                              );
 
     }
+
+    Command alignLeftCommand = new TwoPointAngle(drivebase, true);
+    Command alignRightCommand = new TwoPointAngle(drivebase, false);
+
     if (DriverStation.isTest())
     {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+      drivebase.setDefaultCommand(driveFieldOrientedBounds); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().onTrue(Commands.none());
+      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly()); // x lock
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
-
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.x().onTrue(Commands.runOnce(() -> drivebase.resetOdometryAgainstBounds(false)));
       driverXbox.y().onTrue(Commands.runOnce(() -> applyBounds = !applyBounds).andThen(Commands.runOnce(() -> applyBoundsPublisher.set(applyBounds))));
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly()); // x lock
-      driverXbox.rightBumper().onTrue(Commands.none());
+      driverXbox.leftBumper().whileTrue(alignLeftCommand);
+      driverXbox.rightBumper().whileTrue(alignRightCommand);
     } 
 
   }
