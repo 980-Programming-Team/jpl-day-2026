@@ -503,6 +503,17 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
+  public void resetOdometryAgainstBounds(boolean left)
+  {
+    swerveDrive.resetOdometry(
+      new Pose2d(
+        left ? Constants.DrivebaseConstants.BOUNDS_WIDTH.minus(Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5)) : Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
+        Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
+        Rotation2d.kZero
+      )
+    );
+  }
+
   /**
    * Gets the current pose (position and rotation) of the robot, as reported by odometry.
    *

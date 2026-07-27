@@ -18,15 +18,18 @@ public class TwoPointAngle extends Command {
     Translation2d currentPoint;
     SwerveSubsystem swerve;
     double threshold = 0.2; //degrees
-    FieldObject2d fieldWatchpoint = Constants.FIELD.getObject("Watchpoint");
+    boolean aim = false;
+    boolean left;
 
     Translation2d rotationVec;
+
     SwerveInputStream driveTargetAngle = Robot.m_robotContainer.driveAngularVelocity.copy()
         .withControllerHeadingAxis(() -> -rotationVec.getX(), () -> -rotationVec.getY())
-        .headingWhile(true);
+        .headingWhile(()->aim);
 
-    TwoPointAngle(SwerveSubsystem swerve) {
+    TwoPointAngle(SwerveSubsystem swerve, boolean left) {
         this.swerve = swerve;
+        this.left = left;
     }
 
     public boolean isAiming(double threshold, Rotation2d target, Rotation2d current) {
@@ -37,19 +40,17 @@ public class TwoPointAngle extends Command {
 
     public void initialize() {
         watchpoint = swerve.getPose().getTranslation();
+        aim = true;
     }
 
     public void execute() {
         Translation2d currentPoint = swerve.getPose().getTranslation();
         rotationVec = watchpoint.minus(currentPoint);
         Rotation2d rotation = rotationVec.getAngle();
-        Rotation2d curRot = swerve.getPose().getRotation();
-        if (!isAiming(threshold, rotation, curRot)) {
-            swerve.driveFieldOriented
-        }
     }
 
     public void end(boolean interrupted) {
-        swerve.setHeading(null);
+        swerve.resetOdometryAgainstBounds(left);
+        aim = false;
     }
 }
