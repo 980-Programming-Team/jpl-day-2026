@@ -22,9 +22,6 @@ public class TwoPointAngle extends Command {
 
     public static Translation2d rotationVec = new Translation2d(0, 0);
     public static boolean aim = false;
-    public static SwerveInputStream driveTargetAngle = Robot.m_robotContainer.driveAngularVelocity.copy()
-        .withControllerHeadingAxis(() -> -rotationVec.getX(), () -> -rotationVec.getY())
-        .headingWhile(()->aim);
 
     public TwoPointAngle(SwerveSubsystem swerve, boolean left) {
         this.swerve = swerve;

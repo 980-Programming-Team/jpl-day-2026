@@ -93,6 +93,11 @@ public class RobotContainer
       driverXbox::getRightY)
       .headingWhile(true);
 
+  
+  SwerveInputStream driveTargetAngle = Robot.m_robotContainer.driveAngularVelocity.copy()
+        .withControllerHeadingAxis(() -> -TwoPointAngle.rotationVec.getX(), () -> -TwoPointAngle.rotationVec.getY())
+        .headingWhile(()->TwoPointAngle.aim);
+
   /**
    * Clone's the angular velocity input stream and converts it to a robotRelative input stream.
    */
@@ -176,7 +181,7 @@ public class RobotContainer
   {
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveFieldOrientedBounds = drivebase.driveFieldOriented(TwoPointAngle.driveTargetAngle);
+    Command driveFieldOrientedBounds = drivebase.driveFieldOriented(driveTargetAngle);
     // Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
     Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
     // Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
@@ -238,7 +243,7 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(alignLeftCommand);
       driverXbox.rightBumper().whileTrue(alignRightCommand);
     } 
-
+ 
   }
 
   /**
