@@ -12,7 +12,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
@@ -46,8 +48,9 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   public boolean applyBounds = true;
-  public boolean alignmentSideLeft = false;
   public BooleanPublisher applyBoundsPublisher = NetworkTableInstance.getDefault().getTable("SmartDashboard/Bounds").getBooleanTopic("Bounds Active").publish();
+
+  public BooleanEntry kidMode = NetworkTableInstance.getDefault().getTable("SmartDashboard/ManualConfigs").getBooleanTopic("Kid Mode").getEntry(false);
 
   public double speedScale = 0.25;
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -133,6 +136,7 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    kidMode.set(false);
     applyBoundsPublisher.set(applyBounds);
     drivebase.zeroGyro();
 
@@ -236,10 +240,11 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
     } else
     {
-      driverXbox.x().onTrue(Commands.runOnce(() -> drivebase.resetOdometryAgainstBounds(false)));
-      driverXbox.y().onTrue(Commands.runOnce(() -> applyBounds = !applyBounds).andThen(Commands.runOnce(() -> applyBoundsPublisher.set(applyBounds))));
-      driverXbox.leftBumper().whileTrue(alignLeftCommand);
-      driverXbox.rightBumper().whileTrue(alignRightCommand);
+      driverXbox.x().and(() -> !kidMode.get()).onTrue(Commands.runOnce(() -> drivebase.resetOdometryAgainstBounds(true)));
+      driverXbox.b().and(() -> !kidMode.get()).onTrue(Commands.runOnce(() -> drivebase.resetOdometryAgainstBounds(false)));
+      driverXbox.y().and(() -> !kidMode.get()).onTrue(Commands.runOnce(() -> applyBounds = !applyBounds).andThen(Commands.runOnce(() -> applyBoundsPublisher.set(applyBounds))));
+      driverXbox.leftBumper().and(() -> !kidMode.get()).whileTrue(alignLeftCommand);
+      driverXbox.rightBumper().and(() -> !kidMode.get()).whileTrue(alignRightCommand);
     }
   }
 

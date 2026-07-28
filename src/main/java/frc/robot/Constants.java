@@ -82,8 +82,10 @@ public final class Constants
     public static final Distance ROBOT_BUMPER_THICKNESS = Inches.of(3);
     public static final Distance ROBOT_WIDTH = Inches.of(34); // added 2 inches to account for gaps between bumpers and frame
    
-    public static final Distance BOUNDS_PADDING = Inches.of(20);
-    public static final Distance BOUNDS_WIDTH = Feet.of(20);
+    public static final Distance BOUNDS_PADDING = ROBOT_WIDTH.times(0.5).plus(
+      Inches.of(3)
+    );
+    public static final Distance BOUNDS_WIDTH = Feet.of(10);
     public static final Distance BOUNDS_HEIGHT = Feet.of(10);
 
     public static final Rectangle2d ROBOT_BOUNDS = new Rectangle2d(
