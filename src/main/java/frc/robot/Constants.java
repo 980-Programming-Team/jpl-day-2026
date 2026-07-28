@@ -87,6 +87,7 @@ public final class Constants
     );
     public static final Distance BOUNDS_WIDTH = Feet.of(10);
     public static final Distance BOUNDS_HEIGHT = Feet.of(10);
+    public static final double fieldScale = 8 / BOUNDS_WIDTH.in(Meters); // ASPECT RATIO OF THE BOUNDS MUST BE LESS THAN OR EQUAL TO THE APSECT RATIO OF THE FIELD
 
     public static final Rectangle2d ROBOT_BOUNDS = new Rectangle2d(
         new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING),
@@ -97,10 +98,10 @@ public final class Constants
 
     static {
       ROBOT_BOUNDS_FIELD.setPoses(
-        new Pose2d(BOUNDS_PADDING, BOUNDS_PADDING, Rotation2d.fromDegrees(0)), 
-        new Pose2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_PADDING, Rotation2d.fromDegrees(0)),
-        new Pose2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING), Rotation2d.kZero),
-        new Pose2d(BOUNDS_PADDING, BOUNDS_WIDTH.minus(BOUNDS_PADDING), Rotation2d.fromDegrees(0))
+        new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)), 
+        new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)),
+        new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.kZero),
+        new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.fromDegrees(0))
       );
       SmartDashboard.putData("Bounds/Bounds Field", FIELD);
     }

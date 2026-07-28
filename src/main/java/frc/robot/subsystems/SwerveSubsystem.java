@@ -125,7 +125,7 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    Constants.FIELD.setRobotPose(swerveDrive.getPose());
+    Constants.FIELD.setRobotPose(swerveDrive.getPose().times(Constants.DrivebaseConstants.fieldScale));
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
   }
