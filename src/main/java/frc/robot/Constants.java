@@ -83,12 +83,12 @@ public final class Constants
     public static final Distance ROBOT_WIDTH = Inches.of(34); // added 2 inches to account for gaps between bumpers and frame
    
     public static final Distance BOUNDS_PADDING = Inches.of(20);
-    public static final Distance BOUNDS_WIDTH = Feet.of(10);
+    public static final Distance BOUNDS_WIDTH = Feet.of(20);
     public static final Distance BOUNDS_HEIGHT = Feet.of(10);
 
     public static final Rectangle2d ROBOT_BOUNDS = new Rectangle2d(
         new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING),
-        new Translation2d(BOUNDS_WIDTH.minus(BOUNDS_PADDING), BOUNDS_HEIGHT.minus(BOUNDS_PADDING))
+        new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING))
     );
     public static final FieldObject2d ROBOT_BOUNDS_FIELD = FIELD.getObject("Bounds Area");
     public static final Time BOUNDS_LOOK_TIME = Seconds.of(0.1);
