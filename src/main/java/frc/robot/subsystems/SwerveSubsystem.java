@@ -455,8 +455,9 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity)
   {
     return run(() -> {
-      double vx = velocity.get().vxMetersPerSecond;
-      double vy = velocity.get().vyMetersPerSecond;
+      ChassisSpeeds myVel = velocity.get();
+      double vx = myVel.vxMetersPerSecond;
+      double vy = myVel.vyMetersPerSecond;
       double predictTime = Constants.DrivebaseConstants.BOUNDS_LOOK_TIME.in(Seconds);
       Translation2d predictedTranslation = new Translation2d(vx * predictTime, vy * predictTime);
 
@@ -466,7 +467,7 @@ public class SwerveSubsystem extends SubsystemBase
       RobotContainer m_robotContainer = Robot.m_robotContainer;
       if (!(m_robotContainer != null && m_robotContainer.applyBounds && !Constants.DrivebaseConstants.ROBOT_BOUNDS.contains(predictedPose.getTranslation())))
       {
-        swerveDrive.driveFieldOriented(velocity.get());
+        swerveDrive.driveFieldOriented(myVel);
       } else {
         swerveDrive.driveFieldOriented(new ChassisSpeeds(
           0,
@@ -507,6 +508,7 @@ public class SwerveSubsystem extends SubsystemBase
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
+    System.out.println("Normal Reset called");
   }
 
   public void resetOdometryAgainstBounds(boolean left)
@@ -514,10 +516,11 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.resetOdometry(
       new Pose2d(
         Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
-        left ? Constants.DrivebaseConstants.BOUNDS_HEIGHT.minus(Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5)) : Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
+        left ? Constants.DrivebaseConstants.BOUNDS_WIDTH.minus(Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5)) : Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
         Rotation2d.kZero
       )
     );
+    System.out.println("Special Reset Called");
   }
 
   /**

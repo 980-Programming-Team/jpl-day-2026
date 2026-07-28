@@ -96,9 +96,11 @@ public class RobotContainer
 
   
   SwerveInputStream driveTargetAngle = driveAngularVelocity.copy()
+        .withControllerRotationAxis(() -> (Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() : 0) * -1)
         .withControllerHeadingAxis(() -> -TwoPointAngle.rotationVec.getX(), () -> -TwoPointAngle.rotationVec.getY())
         .headingWhile(()->TwoPointAngle.aim);
 
+  
   /**
    * Clone's the angular velocity input stream and converts it to a robotRelative input stream.
    */
@@ -189,13 +191,8 @@ public class RobotContainer
     // Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     // Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
-    if (RobotBase.isSimulation())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    } else
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
+    
+    drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
     if (Robot.isSimulation())
     {
@@ -213,8 +210,8 @@ public class RobotContainer
       //                                                                new Constraints(Units.degreesToRadians(360),
       //                                                                                Units.degreesToRadians(180))
       //                                      ));
-      driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.a().whileTrue(drivebase.sysIdDriveMotorCommand());
+      //driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      //driverXbox.a().whileTrue(drivebase.sysIdDriveMotorCommand());
       // driverXbox.b().whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
       //                                                () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
@@ -230,7 +227,7 @@ public class RobotContainer
 
     if (DriverStation.isTest())
     {
-      drivebase.setDefaultCommand(driveFieldOrientedBounds); // Overrides drive command above!
+      //drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
