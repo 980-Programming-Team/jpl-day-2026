@@ -97,8 +97,7 @@ public class RobotContainer
 
   
   SwerveInputStream driveTargetAngle = driveAngularVelocity.copy()
-        .withControllerRotationAxis(() -> (Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() : 0) * -1)
-        .withControllerHeadingAxis(() -> -TwoPointAngle.rotationVec.getX(), () -> -TwoPointAngle.rotationVec.getY())
+        .withControllerHeadingAxis(() -> TwoPointAngle.rotationVec.getY(), () -> TwoPointAngle.rotationVec.getX())
         .headingWhile(()->TwoPointAngle.aim);
 
   
