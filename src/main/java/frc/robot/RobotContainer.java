@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -46,11 +47,11 @@ public class RobotContainer
 {
   public boolean applyBounds = true;
   public boolean alignmentSideLeft = false;
-  public BooleanPublisher applyBoundsPublisher = NetworkTableInstance.getDefault().getTable("Bounds").getBooleanTopic("Bounds Active").publish();
+  public BooleanPublisher applyBoundsPublisher = NetworkTableInstance.getDefault().getTable("SmartDashboard/Bounds").getBooleanTopic("Bounds Active").publish();
 
   public double speedScale = 0.25;
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.WINDOWS, 0);
+  final CommandXboxController driverXbox = new CustomJoystick(CustomJoystick.OS.MACOS, 0);
 
   public CommandXboxController getDriverController()
   {
@@ -80,7 +81,7 @@ public class RobotContainer
     () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftY() * -1 * speedScale : 0,
     () -> Math.hypot(driverXbox.getLeftY(), driverXbox.getLeftX()) > Constants.OperatorConstants.k_deadband ? driverXbox.getLeftX() * -1 * speedScale : 0
   )
-    .withControllerRotationAxis(() -> (Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() * (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? -1 : 1) : 0) * (Robot.isReal() ? -1 : 1))
+    .withControllerRotationAxis(() -> (Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() : 0) * -1)
     .scaleTranslation(1)
     .allianceRelativeControl(true);
 
@@ -94,7 +95,7 @@ public class RobotContainer
       .headingWhile(true);
 
   
-  SwerveInputStream driveTargetAngle = Robot.m_robotContainer.driveAngularVelocity.copy()
+  SwerveInputStream driveTargetAngle = driveAngularVelocity.copy()
         .withControllerHeadingAxis(() -> -TwoPointAngle.rotationVec.getX(), () -> -TwoPointAngle.rotationVec.getY())
         .headingWhile(()->TwoPointAngle.aim);
 
@@ -242,8 +243,7 @@ public class RobotContainer
       driverXbox.y().onTrue(Commands.runOnce(() -> applyBounds = !applyBounds).andThen(Commands.runOnce(() -> applyBoundsPublisher.set(applyBounds))));
       driverXbox.leftBumper().whileTrue(alignLeftCommand);
       driverXbox.rightBumper().whileTrue(alignRightCommand);
-    } 
- 
+    }
   }
 
   /**

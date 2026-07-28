@@ -12,10 +12,12 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -134,14 +136,12 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    m_robotContainer.speedScale = 1;
+    //m_robotContainer.speedScale = 1;
     SwerveDrive swerveDrive = m_robotContainer.getSwerve().getSwerveDrive();
-    for (SwerveModule module : swerveDrive.getModules()) {
-      module.getDriveMotor().setCurrentLimit(10);
-      module.getAngleMotor().setCurrentLimit(5);
-    }
     swerveDrive.setCosineCompensator(false);
     swerveDrive.setHeadingCorrection(false);
+    DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
+    DriverStationSim.notifyNewData();
   }
 
   /** This function is called periodically whilst in simulation. */

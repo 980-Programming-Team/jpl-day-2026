@@ -467,6 +467,12 @@ public class SwerveSubsystem extends SubsystemBase
       if (!(m_robotContainer != null && m_robotContainer.applyBounds && !Constants.DrivebaseConstants.ROBOT_BOUNDS.contains(predictedPose.getTranslation())))
       {
         swerveDrive.driveFieldOriented(velocity.get());
+      } else {
+        swerveDrive.driveFieldOriented(new ChassisSpeeds(
+          0,
+          0,
+          0
+        ));
       }
     });
   }
@@ -507,8 +513,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive.resetOdometry(
       new Pose2d(
-        left ? Constants.DrivebaseConstants.BOUNDS_WIDTH.minus(Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5)) : Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
         Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
+        left ? Constants.DrivebaseConstants.BOUNDS_HEIGHT.minus(Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5)) : Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
         Rotation2d.kZero
       )
     );
