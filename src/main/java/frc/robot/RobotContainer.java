@@ -83,6 +83,7 @@ public class RobotContainer
   )
     .withControllerRotationAxis(() -> (Math.hypot(driverXbox.getRightX(), driverXbox.getRightY()) > Constants.OperatorConstants.k_deadband ? speedScale * driverXbox.getRightX() : 0) * -1)
     .scaleTranslation(1)
+    .deadband(0.0001)
     .allianceRelativeControl(true);
 
   /**
@@ -90,8 +91,8 @@ public class RobotContainer
    */
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
     .withControllerHeadingAxis(
-      driverXbox::getRightX,
-      driverXbox::getRightY)
+      () -> driverXbox.getRightX() * (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? -1 : 1),
+      () -> driverXbox.getRightY() * (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue ? -1 : 1))
       .headingWhile(true);
 
   
@@ -192,7 +193,7 @@ public class RobotContainer
     // Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
     
-    drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+    drivebase.setDefaultCommand(driveFieldOrientedBounds);
 
     if (Robot.isSimulation())
     {
