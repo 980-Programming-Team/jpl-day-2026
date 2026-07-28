@@ -91,7 +91,7 @@ public final class Constants
         new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING))
     );
     public static final FieldObject2d ROBOT_BOUNDS_FIELD = FIELD.getObject("Bounds Area");
-    public static final Time BOUNDS_LOOK_TIME = Seconds.of(0.1);
+    public static final Time BOUNDS_LOOK_TIME = Seconds.of(0.15);
 
     static {
       ROBOT_BOUNDS_FIELD.setPoses(
