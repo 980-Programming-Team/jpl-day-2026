@@ -81,13 +81,14 @@ public final class Constants
     public static final Distance ROBOT_WIDTH_NO_BUMPERS = Inches.of(29);
     public static final Distance ROBOT_BUMPER_THICKNESS = Inches.of(3);
     public static final Distance ROBOT_WIDTH = Inches.of(34); // added 2 inches to account for gaps between bumpers and frame
-   
+    // Scaled width for elastic: 2.286
     public static final Distance BOUNDS_PADDING = ROBOT_WIDTH.times(0.5).plus(
-      Inches.of(3)
+      Inches.of(0)
     );
     public static final Distance BOUNDS_WIDTH = Feet.of(10);
     public static final Distance BOUNDS_HEIGHT = Feet.of(10);
-    public static final double fieldScale = 8 / BOUNDS_WIDTH.in(Meters); // ASPECT RATIO OF THE BOUNDS MUST BE LESS THAN OR EQUAL TO THE APSECT RATIO OF THE FIELD
+    public static final double fieldScale = 8 / BOUNDS_WIDTH.in(Meters); // around 2.625
+    // ASPECT RATIO OF THE BOUNDS MUST BE LESS THAN OR EQUAL TO THE APSECT RATIO OF THE FIELD
 
     public static final Rectangle2d ROBOT_BOUNDS = new Rectangle2d(
         new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING),
@@ -98,10 +99,14 @@ public final class Constants
 
     static {
       ROBOT_BOUNDS_FIELD.setPoses(
-        new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)), 
-        new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)),
-        new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.kZero),
-        new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.fromDegrees(0))
+        // new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)), 
+        // new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)),
+        // new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.kZero),
+        // new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.fromDegrees(0))
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
+        new Pose2d(new Translation2d(BOUNDS_HEIGHT, Meters.of(0)).times(fieldScale), Rotation2d.fromDegrees(0)),
+        new Pose2d(new Translation2d(BOUNDS_HEIGHT, BOUNDS_WIDTH).times(fieldScale), Rotation2d.kZero),
+        new Pose2d(new Translation2d(Meters.of(0), BOUNDS_WIDTH).times(fieldScale), Rotation2d.fromDegrees(0))
       );
       SmartDashboard.putData("Bounds/Bounds Field", FIELD);
     }
