@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -37,6 +38,7 @@ public class Robot extends LoggedRobot {
   private CustomJoystick driverController;
   private PigeonIMU testPigeon;
   private DoublePublisher pigeonPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Raw Pigeon Yaw").publish();
+  private DoublePublisher batteryVolatagePublisher = NetworkTableInstance.getDefault().getDoubleTopic("SmartDashboard/Battery Voltage").publish();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -83,6 +85,7 @@ public class Robot extends LoggedRobot {
 
     if (Robot.isReal()) {
       pigeonPublisher.set(testPigeon.getYaw());
+      batteryVolatagePublisher.set(RobotController.getBatteryVoltage());
     }
   }
 

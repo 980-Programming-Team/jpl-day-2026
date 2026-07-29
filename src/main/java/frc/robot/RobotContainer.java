@@ -47,7 +47,7 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
-  public boolean applyBounds = true;
+  public boolean applyBounds = false;
   public BooleanPublisher applyBoundsPublisher = NetworkTableInstance.getDefault().getTable("SmartDashboard/Bounds").getBooleanTopic("Bounds Active").publish();
 
   public BooleanEntry kidMode = NetworkTableInstance.getDefault().getTable("SmartDashboard/ManualConfigs").getBooleanTopic("Kid Mode").getEntry(false);
