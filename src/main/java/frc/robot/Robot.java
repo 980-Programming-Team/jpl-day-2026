@@ -4,13 +4,9 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
-
-import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -19,12 +15,12 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.TimedRobot;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utilities.CustomJoystick;
 import swervelib.SwerveDrive;
-import swervelib.SwerveModule;
+
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -36,8 +32,6 @@ public class Robot extends LoggedRobot {
 
   public static RobotContainer m_robotContainer;
   private CustomJoystick driverController;
-  private PigeonIMU testPigeon;
-  private DoublePublisher pigeonPublisher = NetworkTableInstance.getDefault().getDoubleTopic("Raw Pigeon Yaw").publish();
   private DoublePublisher batteryVolatagePublisher = NetworkTableInstance.getDefault().getDoubleTopic("SmartDashboard/Battery Voltage").publish();
 
   /**
@@ -45,7 +39,6 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
-    testPigeon = new PigeonIMU(30);
     Logger.recordMetadata("ProjectName", "jpl-day-2026"); // Set your project name
 
     if (isReal()) { // True if real, false if simulation
@@ -81,10 +74,8 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    driverController.periodic();
 
     if (Robot.isReal()) {
-      pigeonPublisher.set(testPigeon.getYaw());
       batteryVolatagePublisher.set(RobotController.getBatteryVoltage());
     }
   }
@@ -99,12 +90,6 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
-    }
   }
 
   /** This function is called periodically during autonomous. */

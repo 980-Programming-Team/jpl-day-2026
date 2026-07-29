@@ -4,32 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rectangle2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 //import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import swervelib.math.Matter;
 
 /**
@@ -48,8 +30,6 @@ public final class Constants
   public static final double MAX_SPEED = Units.feetToMeters(15.1);
   public static final Field2d FIELD = new Field2d();
   
-  public static Optional<RobotConfig> ROBOT_CONFIG = Optional.empty();
-  
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
   public static final class CAN
@@ -67,12 +47,6 @@ public final class Constants
 
   }
 
-  public static final class AutoConstants
-  {
-    // public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    // public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
-  }
-
   public static final class DrivebaseConstants
   {
 
@@ -81,53 +55,11 @@ public final class Constants
     public static final Distance ROBOT_WIDTH_NO_BUMPERS = Inches.of(29);
     public static final Distance ROBOT_BUMPER_THICKNESS = Inches.of(3);
     public static final Distance ROBOT_WIDTH = Inches.of(34); // added 2 inches to account for gaps between bumpers and frame
-    // Scaled width for elastic: 2.286
-    public static final Distance BOUNDS_PADDING = ROBOT_WIDTH.times(0.5).plus(
-      Inches.of(0)
-    );
-    public static final Distance BOUNDS_WIDTH = Feet.of(10);
-    public static final Distance BOUNDS_HEIGHT = Feet.of(10);
-    public static final double fieldScale = 8 / BOUNDS_WIDTH.in(Meters); // around 2.625
-    // ASPECT RATIO OF THE BOUNDS MUST BE LESS THAN OR EQUAL TO THE APSECT RATIO OF THE FIELD
-
-    public static final Rectangle2d ROBOT_BOUNDS = new Rectangle2d(
-        new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING),
-        new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING))
-    );
-    public static final FieldObject2d ROBOT_BOUNDS_FIELD = FIELD.getObject("Bounds Area");
-    public static final Time BOUNDS_LOOK_TIME = Seconds.of(0.15);
-
-    static {
-      ROBOT_BOUNDS_FIELD.setPoses(
-        // new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)), 
-        // new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_PADDING).times(fieldScale), Rotation2d.fromDegrees(0)),
-        // new Pose2d(new Translation2d(BOUNDS_HEIGHT.minus(BOUNDS_PADDING), BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.kZero),
-        // new Pose2d(new Translation2d(BOUNDS_PADDING, BOUNDS_WIDTH.minus(BOUNDS_PADDING)).times(fieldScale), Rotation2d.fromDegrees(0))
-        new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-        new Pose2d(new Translation2d(BOUNDS_HEIGHT, Meters.of(0)).times(fieldScale), Rotation2d.fromDegrees(0)),
-        new Pose2d(new Translation2d(BOUNDS_HEIGHT, BOUNDS_WIDTH).times(fieldScale), Rotation2d.kZero),
-        new Pose2d(new Translation2d(Meters.of(0), BOUNDS_WIDTH).times(fieldScale), Rotation2d.fromDegrees(0))
-      );
-      SmartDashboard.putData("Bounds/Bounds Field", FIELD);
-    }
-  }
-
-  public static class DriveTeamConstants
-  {
-
-    public static final int driver = 0;
-
-    public static final int operator = 1;
-
-    public static final int prajBox = 2;
-
   }
 
   public static class OperatorConstants
   {
-    public static final int k_driverControllerPort = 0;
     // Joystick Deadband
     public static final double k_deadband = 0.2; 
-    //public static final double TURN_CONSTANT = 6;
   }
 }
