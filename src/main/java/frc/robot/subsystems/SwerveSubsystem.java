@@ -29,6 +29,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -121,10 +122,11 @@ public class SwerveSubsystem extends SubsystemBase
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                             Rotation2d.fromDegrees(0)));
   }
-
+  StructPublisher<Pose2d> robotPose = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Field/OdometryPose", Pose2d.struct).publish();
   @Override
   public void periodic()
   {
+    robotPose.set(new Pose2d(0, 0, Rotation2d.kZero));
     Constants.FIELD.setRobotPose(swerveDrive.getPose().times(Constants.DrivebaseConstants.fieldScale));
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());

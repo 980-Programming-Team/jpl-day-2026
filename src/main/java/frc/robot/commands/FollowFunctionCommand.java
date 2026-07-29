@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
@@ -87,6 +88,12 @@ public class FollowFunctionCommand extends Command {
             null,
             new GoalEndState(0.0, prevPoint.getRotation()),
             false
+        );
+
+        System.out.println(
+            finalPath.getPathPoses().stream()
+            .map(Pose2d::toString)
+            .collect(Collectors.joining("\n"))
         );
 
         followPathCommand = AutoBuilder.followPath(finalPath);
