@@ -20,7 +20,9 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -122,11 +124,11 @@ public class SwerveSubsystem extends SubsystemBase
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                             Rotation2d.fromDegrees(0)));
   }
-  StructPublisher<Pose2d> robotPose = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Field/OdometryPose", Pose2d.struct).publish();
+  StructPublisher<Pose3d> robotPose = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/MapleSim/Goals/BlueHub", Pose3d.struct).publish();
   @Override
   public void periodic()
   {
-    robotPose.set(new Pose2d(0, 0, Rotation2d.kZero));
+    robotPose.set(new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)));
     Constants.FIELD.setRobotPose(swerveDrive.getPose().times(Constants.DrivebaseConstants.fieldScale));
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
