@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.FollowFunctionCommand;
 import frc.robot.commands.TwoPointAngle;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utilities.CustomJoystick;
@@ -255,8 +256,9 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
+    return new FollowFunctionCommand((x)->2*x, 10, drivebase);
     // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand 
-    return autoChooser.getSelected();
+    //return autoChooser.getSelected();
   }
 
   public void setMotorBrake(boolean brake)

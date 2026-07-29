@@ -80,9 +80,9 @@ public class FollowFunctionCommand extends Command {
         finalPath = new PathPlannerPath(
             finalWaypoints, 
             finalRotations, 
-            null,
-            null,
-            null,
+            List.of(),
+            List.of(),
+            List.of(),
             constraints,
             null,
             new GoalEndState(0.0, prevPoint.getRotation()),
