@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -28,6 +29,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -108,6 +110,7 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
     setupPathPlanner();
+    
   }
 
   /**
@@ -124,11 +127,14 @@ public class SwerveSubsystem extends SubsystemBase
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                             Rotation2d.fromDegrees(0)));
   }
-  StructPublisher<Pose3d> robotPose = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/MapleSim/Goals/BlueHub", Pose3d.struct).publish();
+  // StructPublisher<Pose2d> robotPose = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Field/Robot", Pose2d.struct).publish();
+  // DoubleArrayPublisher xModulesPub = NetworkTableInstance.getDefault()
+  //   .getDoubleArrayTopic("/SmartDashboard/Field/XModules") // Match your exact NT path here
+  //   .publish();
+  
   @Override
   public void periodic()
   {
-    robotPose.set(new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)));
     Constants.FIELD.setRobotPose(swerveDrive.getPose().times(Constants.DrivebaseConstants.fieldScale));
     Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
@@ -140,8 +146,8 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void setSimulationConfigs() {
-      this.swerveDrive.setHeadingCorrection(true);
-      this.swerveDrive.setCosineCompensator(true);
+      this.swerveDrive.setHeadingCorrection(false);
+      this.swerveDrive.setCosineCompensator(false);
   }
 
   /**
