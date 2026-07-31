@@ -40,6 +40,8 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -56,7 +58,16 @@ public class SwerveSubsystem extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
+  private final PigeonIMU pigeon = new PigeonIMU(30);
 
+  private final DoublePublisher rawYawPublisher = NetworkTableInstance.getDefault().getDoubleTopic("SmartDashboard/PIGEON_TESTS/Raw Yaw").publish();
+  private final DoublePublisher robotYawPublisher = NetworkTableInstance.getDefault().getDoubleTopic("SmartDashboard/PIGEON_TESTS/Robot Yaw").publish();
+
+  private Rotation2d prevHeading = Rotation2d.fromDegrees(pigeon.getYaw());
+  private Rotation2d currentHeading = prevHeading;
+
+  private final Rotation2d headingThreshold = Rotation2d.fromDegrees(5); 
+  private Rotation2d headingOffset = prevHeading;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -108,9 +119,31 @@ public class SwerveSubsystem extends SubsystemBase
                                             Rotation2d.fromDegrees(0)));
   }
 
+  public void setHeading(Rotation2d heading) {
+    Pose2d currentPose = swerveDrive.getPose();
+
+    swerveDrive.resetOdometry(new Pose2d(currentPose.getTranslation(), heading));
+  }
+
   @Override
   public void periodic()
   {
+    currentHeading = Rotation2d.fromDegrees(pigeon.getYaw());
+    double currentHeadingDegrees = currentHeading.getDegrees();
+    double prevHeadingDegrees = prevHeading.getDegrees();
+
+    double rawDiff = currentHeadingDegrees - prevHeadingDegrees;
+    if (rawDiff > 180) {
+      rawDiff -= 360;
+    } else if (rawDiff <= -180) {
+      rawDiff += 360;
+    }
+
+    if (Math.abs(rawDiff) >= headingThreshold.getDegrees()) {
+      this.setHeading(currentHeading.rotateBy(headingOffset.times(-1)));
+      prevHeading = currentHeading;
+    }
+
     Pose2d pose = swerveDrive.getPose();
     Logger.recordOutput("Odometry/RobotPose", pose);
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
@@ -315,7 +348,6 @@ public class SwerveSubsystem extends SubsystemBase
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
-    System.out.println("Normal Reset called");
   }
 
   /**
@@ -353,7 +385,10 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void zeroGyro()
   {
-    swerveDrive.zeroGyro();
+    Pose2d currentPose = swerveDrive.getPose();
+    headingOffset = Rotation2d.fromDegrees(pigeon.getYaw());
+    prevHeading = headingOffset;
+    swerveDrive.resetOdometry(new Pose2d(currentPose.getTranslation(), Rotation2d.fromDegrees(0)));
   }
 
   /**
