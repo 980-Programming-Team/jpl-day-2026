@@ -129,6 +129,7 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     currentHeading = Rotation2d.fromDegrees(pigeon.getYaw());
+    rawYawPublisher.set(currentHeading.getDegrees());
     double currentHeadingDegrees = currentHeading.getDegrees();
     double prevHeadingDegrees = prevHeading.getDegrees();
 
@@ -141,6 +142,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     if (Math.abs(rawDiff) >= headingThreshold.getDegrees()) {
       this.setHeading(currentHeading.rotateBy(headingOffset.times(-1)));
+      robotYawPublisher.set(currentHeading.getDegrees());
       prevHeading = currentHeading;
     }
 
