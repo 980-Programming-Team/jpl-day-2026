@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +43,8 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -56,6 +61,8 @@ public class SwerveSubsystem extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
+
+  private final PigeonIMU pigeon = new PigeonIMU(30);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -112,6 +119,7 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     Pose2d pose = swerveDrive.getPose();
+    swerveDrive.setGyro(new Rotation3d(Degrees.of(pigeon.getRoll()), Degrees.of(pigeon.getPitch()), Degrees.of(pigeon.getYaw())));
     Logger.recordOutput("Odometry/RobotPose", pose);
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
   }
@@ -315,6 +323,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
+    Angle gyroAngle = Degrees.of(initialHolonomicPose.getRotation().getDegrees());
+    swerveDrive.setGyroOffset(new Rotation3d(Degrees.of(pigeon.getRoll()), Degrees.of(pigeon.getPitch()), gyroAngle));
     System.out.println("Normal Reset called");
   }
 
@@ -353,7 +363,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void zeroGyro()
   {
-    swerveDrive.zeroGyro();
+    swerveDrive.setGyroOffset(new Rotation3d(Degrees.of(pigeon.getRoll()), Degrees.of(pigeon.getPitch()), Degrees.of(pigeon.getYaw())));
   }
 
   /**
