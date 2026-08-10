@@ -26,6 +26,8 @@ import frc.robot.commands.FollowFunctionCommand;
 import frc.robot.utilities.CustomJoystick;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
+import swervelib.simulation.ironmaple.simulation.SimulatedArena;
+import swervelib.simulation.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -66,6 +68,8 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     driverController = (CustomJoystick) m_robotContainer.getDriverController();
+
+    SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
   }
 
   /**
