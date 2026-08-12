@@ -36,6 +36,8 @@ import frc.robot.commands.TwoPointAngle;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utilities.CustomJoystick;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import java.io.File;
 import java.util.EnumSet;
 
@@ -137,6 +139,7 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    //drivebase.resetOdometry(new Pose2d(1, 1, Rotation2d.kZero));
     kidMode.set(false);
     applyBoundsPublisher.set(applyBounds);
     drivebase.zeroGyro();
@@ -256,7 +259,7 @@ public class RobotContainer
    */
   public Command getAutonomousCommand()
   {
-    return new FollowFunctionCommand((x)->2*x, 10, drivebase);
+    return new FollowFunctionCommand((x)->2*Math.sin(x)*Math.pow(2, -0.3*x)+2, 0.0, Constants.DrivebaseConstants.BOUNDS_HEIGHT.in(Meters), 0.0, Constants.DrivebaseConstants.BOUNDS_WIDTH.in(Meters));
     // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand 
     //return autoChooser.getSelected();
   }

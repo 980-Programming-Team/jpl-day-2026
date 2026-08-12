@@ -85,9 +85,9 @@ public final class Constants
     public static final Distance BOUNDS_PADDING = ROBOT_WIDTH.times(0.5).plus(
       Inches.of(0)
     );
-    public static final Distance BOUNDS_WIDTH = Meters.of(8);
-    public static final Distance BOUNDS_HEIGHT = Meters.of(16.54);
-    public static final double fieldScale = 8 / BOUNDS_WIDTH.in(Meters); // around 2.625
+    public static final Distance BOUNDS_WIDTH = Meters.of(8.07);//Meters.of(6);// Field: Meters.of(8);
+    public static final Distance BOUNDS_HEIGHT = Meters.of(16.54); //Meters.of(6);//Meters.of(16.54);
+    public static final double fieldScale = 1;// 8 / BOUNDS_WIDTH.in(Meters); // around 2.625
     // ASPECT RATIO OF THE BOUNDS MUST BE LESS THAN OR EQUAL TO THE APSECT RATIO OF THE FIELD
 
     public static final Rectangle2d ROBOT_BOUNDS = new Rectangle2d(

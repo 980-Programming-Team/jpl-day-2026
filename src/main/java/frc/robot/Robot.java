@@ -13,6 +13,9 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -23,6 +26,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.FollowFunctionCommand;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utilities.CustomJoystick;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
@@ -69,7 +73,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
     driverController = (CustomJoystick) m_robotContainer.getDriverController();
 
-    SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
+    //SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
   }
 
   /**
@@ -142,14 +146,18 @@ public class Robot extends LoggedRobot {
   public void testPeriodic() {}
 
   /** This function is called once when the robot is first started up. */
+  final boolean collisions = false;
   @Override
   public void simulationInit() {
-    //m_robotContainer.speedScale = 1;
+    m_robotContainer.speedScale = 1;
     SwerveDrive swerveDrive = m_robotContainer.getSwerve().getSwerveDrive();
     swerveDrive.setCosineCompensator(false);
     swerveDrive.setHeadingCorrection(false);
     DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
     DriverStationSim.notifyNewData();
+    if (!collisions)
+      SwerveSubsystem.telemetryOffset = new Translation2d(1000000, 1000000);
+    m_robotContainer.getSwerve().resetOdometry(new Pose2d(1, 1, Rotation2d.kZero));
   }
 
   /** This function is called periodically whilst in simulation. */

@@ -43,9 +43,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +71,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase
 {
+  public static Translation2d telemetryOffset = new Translation2d(0, 0);
   /**
    * Swerve drive object.
    */
@@ -110,7 +113,6 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
     setupPathPlanner();
-    
   }
 
   /**
@@ -119,14 +121,14 @@ public class SwerveSubsystem extends SubsystemBase
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
-  {
-    swerveDrive = new SwerveDrive(driveCfg,
-                                  controllerCfg,
-                                  Constants.MAX_SPEED,
-                                  new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
-                                            Rotation2d.fromDegrees(0)));
-  }
+  // public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  // {
+  //   swerveDrive = new SwerveDrive(driveCfg,
+  //                                 controllerCfg,
+  //                                 Constants.MAX_SPEED,
+  //                                 new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+  //                                           Rotation2d.fromDegrees(0)));
+  // }
   // StructPublisher<Pose2d> robotPose = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Field/Robot", Pose2d.struct).publish();
   // DoubleArrayPublisher xModulesPub = NetworkTableInstance.getDefault()
   //   .getDoubleArrayTopic("/SmartDashboard/Field/XModules") // Match your exact NT path here
@@ -135,14 +137,15 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    Constants.FIELD.setRobotPose(swerveDrive.getPose().times(Constants.DrivebaseConstants.fieldScale));
-    Logger.recordOutput("Odometry/RobotPose", swerveDrive.getPose());
+    Constants.FIELD.setRobotPose(getPose().times(Constants.DrivebaseConstants.fieldScale));
+    Logger.recordOutput("Odometry/RobotPose", getPose());
     Logger.recordOutput("Swerve/ModuleStates/Measured", swerveDrive.getStates());
   }
 
   @Override
   public void simulationPeriodic() {
       // This drives YAGSL's internal simulation physics engine (MapleSim/WPILib)
+      //swerveDrive.updateOdometry();
   }
 
   public void setSimulationConfigs() {
@@ -471,7 +474,7 @@ public class SwerveSubsystem extends SubsystemBase
       double predictTime = Constants.DrivebaseConstants.BOUNDS_LOOK_TIME.in(Seconds);
       Translation2d predictedTranslation = new Translation2d(vx * predictTime, vy * predictTime);
 
-      Pose2d curPose = swerveDrive.getPose();
+      Pose2d curPose = getPose();
       Pose2d predictedPose = new Pose2d(curPose.getTranslation().plus(predictedTranslation), curPose.getRotation());
 
       RobotContainer m_robotContainer = Robot.m_robotContainer;
@@ -517,13 +520,14 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
-    swerveDrive.resetOdometry(initialHolonomicPose);
+    swerveDrive.resetOdometry(new Pose2d(initialHolonomicPose.getTranslation().plus(telemetryOffset), initialHolonomicPose.getRotation()));
+    System.out.println("Rest to: " + new Pose2d(initialHolonomicPose.getTranslation().plus(telemetryOffset), initialHolonomicPose.getRotation()));
     System.out.println("Normal Reset called");
   }
 
   public void resetOdometryAgainstBounds(boolean left)
   {
-    swerveDrive.resetOdometry(
+    resetOdometry(
       new Pose2d(
         Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
         left ? Constants.DrivebaseConstants.BOUNDS_WIDTH.minus(Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5)) : Constants.DrivebaseConstants.ROBOT_WIDTH.times(0.5),
@@ -540,7 +544,8 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Pose2d getPose()
   {
-    return swerveDrive.getPose();
+    Pose2d robotPose = swerveDrive.getPose();
+    return new Pose2d(robotPose.getTranslation().minus(telemetryOffset), robotPose.getRotation());
   }
 
   /**
