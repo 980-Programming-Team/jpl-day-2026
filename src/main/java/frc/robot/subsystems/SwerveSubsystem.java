@@ -63,7 +63,7 @@ public class SwerveSubsystem extends SubsystemBase
   private final DoublePublisher rawYawPublisher = NetworkTableInstance.getDefault().getDoubleTopic("SmartDashboard/PIGEON_TESTS/Raw Yaw").publish();
   private final DoublePublisher robotYawPublisher = NetworkTableInstance.getDefault().getDoubleTopic("SmartDashboard/PIGEON_TESTS/Robot Yaw").publish();
 
-  private Rotation2d prevHeading = Rotation2d.fromDegrees(pigeon.getYaw());
+  private Rotation2d prevHeading = Rotation2d.fromDegrees(pigeon.getYaw() * -1);
   private Rotation2d currentHeading = prevHeading;
 
   private final Rotation2d headingThreshold = Rotation2d.fromDegrees(5); 
@@ -128,7 +128,7 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    currentHeading = Rotation2d.fromDegrees(pigeon.getYaw());
+    currentHeading = Rotation2d.fromDegrees(pigeon.getYaw() * -1);
     rawYawPublisher.set(currentHeading.getDegrees());
     double currentHeadingDegrees = currentHeading.getDegrees();
     double prevHeadingDegrees = prevHeading.getDegrees();
@@ -388,7 +388,7 @@ public class SwerveSubsystem extends SubsystemBase
   public void zeroGyro()
   {
     Pose2d currentPose = swerveDrive.getPose();
-    headingOffset = Rotation2d.fromDegrees(pigeon.getYaw());
+    headingOffset = Rotation2d.fromDegrees(pigeon.getYaw() * -1);
     prevHeading = headingOffset;
     swerveDrive.resetOdometry(new Pose2d(currentPose.getTranslation(), Rotation2d.fromDegrees(0)));
   }
