@@ -19,7 +19,7 @@ Its specific purpose is to serve as a live swerve demo robot in JPL's Take Your 
 - **Hardware Driver:** Phoenix 5, Phoenix 6, REVLib
 
 ## Robot Hardware:
-- **Swerve Module**: SDS MK4 L2 (guessing based on constants)
+- **Swerve Module**: SDS MK4 L1 (guessing based on constants)
 - **IMU:** Pigeon 1.0
 - **Drivetrain Motors:" Neo
 - **Motor Controllers:** SparkMax
