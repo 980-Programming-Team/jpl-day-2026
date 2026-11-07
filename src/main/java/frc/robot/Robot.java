@@ -28,7 +28,7 @@ import swervelib.SwerveDrive;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
+  //private Command m_autonomousCommand;
 
   public static RobotContainer m_robotContainer;
   private CustomJoystick driverController;
@@ -102,9 +102,9 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.cancel();
+    // }
   }
 
   /** This function is called periodically during operator control. */
